@@ -1,0 +1,91 @@
+﻿<Window x:Class="CulinaryRecipesApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+        mc:Ignorable="d"
+        Title="Книга кулинарных рецептов" Height="606" Width="964">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    <Grid>
+        <ListBox Name="recipeListBox" ItemsSource="{Binding Manager.Recipes}" DisplayMemberPath="Name" SelectionMode="Single" HorizontalAlignment="Left" VerticalAlignment="Center" Width="454" Height="538" Margin="10,0,0,0" SelectionChanged="recipeListBox_SelectionChanged"/>
+
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Margin="480,0,0,0" Height="538">
+            <Label Content="Название:"/>
+            <TextBox Name="nameTextBox" Width="150" Margin="0,0,0,10"/>
+
+            <Label Content="Тип:"/>
+            <TextBox Name="typeTextBox" Width="150" Margin="0,0,0,10"/>
+
+            <Label Content="Кухня:"/>
+            <TextBox Name="cuisineTextBox" Width="150" Margin="0,0,0,10"/>
+
+            <Label Content="Ингредиенты:"/>
+            <ListBox Name="ingredientsListBox" SelectionMode="Multiple" Width="150" Height="55"/>
+            <TextBox Name="ingredientTextBox" Width="150" Margin="0,0,0,10"/>
+            <Button Content="Добавить ингредиент" Click="AddIngredient_Click" Width="150"/>
+
+            <Label Content="Инструкции:"/>
+            <ListBox Name="instructionsListBox" Width="150" Height="39"/>
+            <TextBox Name="instructionTextBox" Width="150" Margin="0,0,0,10"/>
+            <Button Content="Добавить инструкцию" Click="AddInstruction_Click" Width="150"/>
+
+            <Label Content="Путь к изображению:"/>
+            <TextBox Name="imagePathTextBox" Width="150" Margin="0,0,0,10" Height="20"/>
+
+            <Button Content="Добавить рецепт" Click="AddRecipe_Click" Width="150"/>
+            <Button Content="Удалить рецепт" Click="RemoveRecipe_Click" Width="150" Margin="9"/>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="639,27,0,0" Height="134" Width="302">
+            <Button Content="Экспорт в .doc" Click="ExportToDoc_Click" Width="254"/>
+            <Label Content="Поиск:"/>
+            <TextBox Name="searchTextBox" Width="251" Margin="0,0,0,10"/>
+            <Button Content="Поиск" Click="SearchRecipes_Click" Width="248"/>
+            <Button Name="clearSearchButton" Content="Очистить результаты поиска" Click="ClearSearchResults_Click" IsEnabled="True" Height="23" Margin="9" Width="251"/>
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="653,167,23,26">
+            <StackPanel>
+                <TextBlock FontSize="16" FontWeight="Bold" Margin="0,0,0,10"><Run Language="ru-ru" Text="И"/><Run Text="нформация о рецепте"/></TextBlock>
+
+                <StackPanel Visibility="{Binding IsRecipeSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <!-- Информация о рецепте -->
+                    <TextBlock Text="{Binding SelectedRecipe.Name}" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding SelectedRecipe.Type}" FontSize="12" FontStyle="Italic" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding SelectedRecipe.Cuisine}" FontSize="12" Margin="0,0,0,10"/>
+
+                    <!-- Ингредиенты -->
+                    <TextBlock Text="Ингредиенты:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ItemsControl ItemsSource="{Binding SelectedRecipe.Ingredients}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Margin="0,0,0,2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Инструкции -->
+                    <TextBlock Text="Инструкции:" FontWeight="Bold" Margin="0,10,0,5"/>
+                    <ItemsControl ItemsSource="{Binding SelectedRecipe.Instructions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Margin="0,0,0,2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Изображение -->
+                    <Image Source="{Binding SelectedRecipe.ImagePath}" Height="150" Margin="0,10,0,0"/>
+                </StackPanel>
+
+                <!-- Сообщение о необходимости выбора рецепта -->
+                <TextBlock Text="Выберите рецепт для просмотра подробной информации." 
+               Visibility="{Binding IsRecipeNotSelected, Converter={StaticResource BooleanToVisibilityConverter}}" 
+               FontStyle="Italic"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
